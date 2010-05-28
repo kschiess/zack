@@ -20,6 +20,8 @@ class Zack::Server
     @connection = Beanstalk::Connection.new(server, tube_name)
   end
   
+  # Handles exactly one request. 
+  #
   def handle_request
     job = @connection.reserve
     begin
@@ -29,6 +31,15 @@ class Zack::Server
       instance.send(sym, *args)
     ensure
       job.delete
+    end
+  end
+
+  # Runs the server and keeps running until the world ends (or the process, 
+  # whichever comes first).
+  #
+  def run
+    loop do
+      handle_request
     end
   end
 end
