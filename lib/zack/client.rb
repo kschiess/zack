@@ -13,5 +13,7 @@ class Zack::Client
   end
   def method_missing(sym, *args, &result_callback)
     @connection.put [sym, args].to_yaml
+    
+    return nil
   end
 end

@@ -12,6 +12,10 @@ describe Zack::Client do
     YAML.load(message.body)
   end
   
+  describe "return value without block" do
+    subject { client.foo }
+    it { should be_nil }
+  end
   context "when calling #foobar(123, '123', :a123)" do
     before(:each) { client.foobar(123, '123', :a123) }
     
