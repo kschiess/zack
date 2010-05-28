@@ -40,7 +40,14 @@ describe Zack::Client do
       :server => BEANSTALK_CONNECTION) }
     
     context "when calling foo" do
-      before(:each) { client.foo }
+      attr_reader :answer
+      before(:each) { 
+        @done = false
+        Thread.start do 
+          @answer = client.foo
+          @done = true
+        end
+      }
       
       it "should queue the message [:foo, [], 'answer_queue']" do
         sym, args, answer_queue = receive_message
@@ -48,8 +55,30 @@ describe Zack::Client do
         sym.should == :foo
         args.should == []
         answer_queue.should match(/answer_.*/)
-      end 
+      end
+      context "when the answer is posted" do
+        # Sends the server a message (as YAML)
+        def send_answer(answer)
+          sym, args, answer_queue = receive_message
+          
+          beanstalk.use answer_queue
+          beanstalk.put answer.to_yaml
+        end
+        before(:each) { send_answer('blah') }
+
+        # Wait for the answer to come in
+        before(:each) do
+          timeout(1) do
+            loop do
+              break if @done
+              sleep 0.05
+            end
+          end
+        end
+        
+        subject { answer }
+        it { should == 'blah' }
+      end
     end
   end
-
 end

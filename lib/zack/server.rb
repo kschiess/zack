@@ -6,6 +6,8 @@ class Zack::Server
     def produce; implementation_klass.new; end
   end
   
+  attr_reader :tube_name
+  
   def initialize(tube_name, opts={})
     server = opts[:server] || 'localhost:11300'
     
@@ -17,6 +19,7 @@ class Zack::Server
       raise ArgumentError, "Either :factory or :simple argument must be given." 
     end
         
+    @tube_name = tube_name
     @connection = Beanstalk::Connection.new(server, tube_name)
   end
   
@@ -25,10 +28,16 @@ class Zack::Server
   def handle_request
     job = @connection.reserve
     begin
-      sym, args = YAML.load(job.body)
+      sym, args, answer_tube = YAML.load(job.body)
       
       instance = @factory.produce
-      instance.send(sym, *args)
+      retval = instance.send(sym, *args)
+      
+      if answer_tube
+        @connection.use answer_tube
+        @connection.put retval.to_yaml
+        @connection.use tube_name
+      end
     ensure
       job.delete
     end

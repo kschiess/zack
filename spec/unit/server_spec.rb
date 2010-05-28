@@ -74,7 +74,20 @@ describe Zack::Server do
               once
           end 
         end
-      end    
+        context "when receiving [:foobar, [], 'answer_queue']" do
+          before(:each) { implementation.should_receive(:foobar => 'blubber') }
+          before(:each) { send_message([:foobar, [], 'answer_queue']) }
+          before(:each) { server.handle_request }
+          
+          it "should post the answer to the tube 'answer_queue'" do
+            beanstalk.watch 'answer_queue'
+            msg = beanstalk.reserve(1)
+            msg.delete
+            
+            YAML.load(msg.body).should == 'blubber'
+          end 
+        end
+      end
     end    
   end
 end
