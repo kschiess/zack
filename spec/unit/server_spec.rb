@@ -8,44 +8,71 @@ describe Zack::Server do
       }.should raise_error(ArgumentError)
     end
   end
-end
+  context "instance" do
+    let(:beanstalk) { Beanstalk::Connection.new(BEANSTALK_CONNECTION, 'zack_server_test') }
+    let(:implementation) { flexmock(:implementation) }
 
-describe Zack::Server, 'with a factory' do
-  # A small factory that always returns instance.
-  class ImplFactory < Struct.new(:instance)
-    def produce
-      instance
+    # Sends the server a message (as YAML)
+    def send_message(message)
+      beanstalk.put message.to_yaml
     end
-  end
-  
-  let(:beanstalk) { Beanstalk::Connection.new(BEANSTALK_CONNECTION, 'zack_server_test') }
-  let(:implementation) { flexmock(:implementation) }
-  let(:server) {
-    Zack::Server.new(
-      'zack_server_test', 
-      :factory => ImplFactory.new(implementation), 
-      :server => BEANSTALK_CONNECTION
-    )
-  }
 
-  subject { server }
-  
-  # Sends the server a message (as YAML)
-  def send_message(message)
-    beanstalk.put message.to_yaml
-  end
+    context "with a factory" do
+      # A small factory that always returns instance.
+      class ImplFactory < Struct.new(:instance)
+        def produce
+          instance
+        end
+      end
 
-  describe "<- #handle_request" do
-    context "when receiving [:foobar, [123, '123', :a123]]" do
-      before(:each) { send_message([:foobar, [123, '123', :a123]]) }
-      after(:each) { server.handle_request }
-      
-      it "should call the right message on implementation" do
-        implementation.
-          should_receive(:foobar).
-          with(123, '123', :a123).
-          once
-      end 
+      let(:server) {
+        Zack::Server.new(
+          'zack_server_test', 
+          :factory => ImplFactory.new(implementation), 
+          :server => BEANSTALK_CONNECTION
+        )
+      }
+
+      subject { server }
+
+      describe "<- #handle_request" do
+        context "when receiving [:foobar, [123, '123', :a123]]" do
+          before(:each) { send_message([:foobar, [123, '123', :a123]]) }
+          after(:each) { server.handle_request }
+
+          it "should call the right message on implementation" do
+            implementation.
+              should_receive(:foobar).
+              with(123, '123', :a123).
+              once
+          end 
+        end
+      end
     end
+    context "with a direct implementation" do
+      let(:server) {
+        Zack::Server.new(
+          'zack_server_test', 
+          :implementation => implementation,
+          :server => BEANSTALK_CONNECTION
+        )
+      }
+
+      subject { server }
+
+      describe "<- #handle_request" do
+        context "when receiving [:foobar, [123, '123', :a123]]" do
+          before(:each) { send_message([:foobar, [123, '123', :a123]]) }
+          after(:each) { server.handle_request }
+
+          it "should call the right message on implementation" do
+            implementation.
+              should_receive(:foobar).
+              with(123, '123', :a123).
+              once
+          end 
+        end
+      end    
+    end    
   end
 end
