@@ -15,7 +15,6 @@ class Zack::Client
       digest = Digest::MD5.new
       digest << @connection.instance_variable_get('@socket').addr.to_s
       @answer_queue_name = "answer_"+digest.hexdigest
-      @connection.watch @answer_queue_name
     end
   end
   
@@ -32,6 +31,7 @@ class Zack::Client
     @connection.put message.to_yaml
 
     if @with_answer.include? sym
+      @connection.watch @answer_queue_name
       answer = @connection.reserve
       return YAML.load(answer.body)
     end
