@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Zack::Server do
-  context "when constructing without :factory / :implementation" do
+  context "when constructing without :factory / :simple" do
     it "should raise ArgumentError" do
       lambda {
         Zack::Server.new('foobar')
@@ -49,11 +49,13 @@ describe Zack::Server do
         end
       end
     end
-    context "with a direct implementation" do
+    context "with a simple class" do
+      let(:implementation_klass) { flexmock(:new => implementation) }
+      
       let(:server) {
         Zack::Server.new(
           'zack_server_test', 
-          :implementation => implementation,
+          :simple => implementation_klass,
           :server => BEANSTALK_CONNECTION
         )
       }
