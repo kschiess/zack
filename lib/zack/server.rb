@@ -9,7 +9,7 @@ class Zack::Server
   attr_reader :tube_name
   
   def initialize(tube_name, opts={})
-    server = opts[:server] || 'localhost:11300'
+    server = opts[:server] || 'beanstalk:11300'
     
     if opts.has_key? :factory
       @factory = opts[:factory]

@@ -5,7 +5,7 @@ require 'digest/md5' # ruby 1.9
 #
 class Zack::Client
   def initialize(tube_name, opts={})
-    server = opts[:server] || 'localhost:11300'
+    server = opts[:server] || 'beanstalk:11300'
     
     @connection = Beanstalk::Connection.new(server, tube_name)
 
