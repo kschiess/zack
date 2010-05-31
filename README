@@ -38,6 +38,10 @@ client.
 zack is a small library that doesn't do much more than what has been shown
 above. 
 
+DEPENDENCIES
+
+Depends on beanstalkd (beanstalkd 1.4.4 or better).
+
 COMPATIBILITY
 
 Should run with most rubies of the 1.8 and 1.9 generations. 
