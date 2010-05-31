@@ -31,3 +31,19 @@ SYNOPSIS
     answer
     
   puts "The answer is #{answer}!"
+  
+This will output 'answer called' on the server and 'The answer is 41!' on the
+client. 
+
+zack is a small library that doesn't do much more than what has been shown
+above. 
+
+COMPATIBILITY
+
+Should run with most rubies of the 1.8 and 1.9 generations. 
+
+STATUS
+
+Useful and useable. First release. 
+
+(c) Kaspar Schiess, Patrick Marchi
