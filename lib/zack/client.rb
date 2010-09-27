@@ -31,9 +31,13 @@ class Zack::Client
     @connection.put message.to_yaml
 
     if @with_answer.include? sym
-      @connection.watch @answer_queue_name
-      answer = @connection.reserve
-      return YAML.load(answer.body)
+      begin
+        @connection.watch @answer_queue_name
+        answer = @connection.reserve
+        return YAML.load(answer.body)
+      ensure
+        answer.delete
+      end
     end
     
     return nil

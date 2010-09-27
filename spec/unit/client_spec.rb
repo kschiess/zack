@@ -41,43 +41,61 @@ describe Zack::Client do
     
     context "when calling foo" do
       attr_reader :answer
-      before(:each) { 
+
+      # Sends the server a message (as YAML)
+      def send_answer(answer, answer_queue)
+        beanstalk.use answer_queue
+        beanstalk.put answer.to_yaml
+      end
+
+      def wait_for_answer
+        timeout(1) do
+          loop do
+            break if @done
+            sleep 0.05
+          end
+        end
+      end
+
+      before(:each) do
         @done = false
         Thread.start do 
           @answer = client.foo
           @done = true
         end
-      }
-      
+      end
+
       it "should queue the message [:foo, [], 'answer_queue']" do
         sym, args, answer_queue = receive_message
-        
-        sym.should == :foo
-        args.should == []
-        answer_queue.should match(/answer_.*/)
-      end
-      context "when the answer is posted" do
-        # Sends the server a message (as YAML)
-        def send_answer(answer)
-          sym, args, answer_queue = receive_message
-          
-          beanstalk.use answer_queue
-          beanstalk.put answer.to_yaml
+        begin
+          sym.should == :foo
+          args.should == []
+          answer_queue.should match(/answer_.*/)
+        ensure
+          # Make sure the client will receive an answer.
+          send_answer('', answer_queue)
         end
-        before(:each) { send_answer('blah') }
+      end
 
-        # Wait for the answer to come in
+      context "when the answer is posted" do
+        attr_reader :answer_queue
         before(:each) do
-          timeout(1) do
-            loop do
-              break if @done
-              sleep 0.05
-            end
-          end
+          sym, args, @answer_queue = receive_message
+          send_answer('blah', answer_queue)
+          wait_for_answer
         end
         
         subject { answer }
         it { should == 'blah' }
+
+        it "should delete the job on the answer queue" do
+          stat = beanstalk.stats_tube(answer_queue)
+          stat['current-jobs-urgent'].should == 0
+          stat['current-jobs-ready'].should == 0
+          stat['current-jobs-reserved'].should == 0
+          stat['current-jobs-delayed'].should == 0
+          stat['current-jobs-buried'].should == 0
+        end
       end
     end
   end
