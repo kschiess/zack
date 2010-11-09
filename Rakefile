@@ -17,7 +17,7 @@ spec = Gem::Specification.new do |s|
 
   # Change these as appropriate
   s.name              = "zack"
-  s.version           = "0.1.1"
+  s.version           = "0.1.2"
   s.summary           = "Ruby RPC calls via beanstalkd"
   s.authors           = ['Kaspar Schiess', 'Patrick Marchi']
   s.email             = ["kaspar.schiess@absurd.li", 'mail@patrickmarchi.ch']

@@ -1,3 +1,7 @@
+= 0.1.2 / 09-11-2010
+
+  * FIX: Don't read our own messages back (client)
+
 = 0.1.1 / 28-09-2010
 
  * Properly deletes jobs.
