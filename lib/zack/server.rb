@@ -27,19 +27,22 @@ class Zack::Server
   #
   def handle_request
     job = @connection.reserve
+    sym, args, answer_tube = nil, nil, nil
     begin
       sym, args, answer_tube = YAML.load(job.body)
-      
-      instance = @factory.produce
-      retval = instance.send(sym, *args)
-      
-      if answer_tube
-        @connection.use answer_tube
-        @connection.put retval.to_yaml
-        @connection.use tube_name
-      end
     ensure
+      # If yaml decoding crashes, the message is probably invalid. Delete it. 
+      # If an exception is raised later on, we treat the request as satisfied.
       job.delete
+    end
+    
+    instance = @factory.produce
+    retval = instance.send(sym, *args)
+    
+    if answer_tube
+      on_tube(answer_tube) do
+        @connection.put retval.to_yaml
+      end
     end
   end
 
@@ -49,6 +52,17 @@ class Zack::Server
   def run
     loop do
       handle_request
+    end
+  end
+  
+private
+  def on_tube(temporary_tube_name)
+    begin
+      @connection.use temporary_tube_name
+      
+      yield
+    ensure
+      @connection.use @tube_name
     end
   end
 end
