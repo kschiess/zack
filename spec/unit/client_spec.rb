@@ -85,6 +85,7 @@ describe Zack::Client do
         it { answer.should == 'blah' }
 
         it "should delete the job on the answer queue" do
+          answer # wait for an answer
           stat = beanstalk.stats_tube(answer_queue)
           stat['current-jobs-urgent'].should == 0
           stat['current-jobs-ready'].should == 0
