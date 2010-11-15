@@ -36,8 +36,8 @@ describe Zack::Server do
       subject { server }
 
       describe "<- #handle_request" do
-        context "when receiving [:foobar, [123, '123', :a123]]" do
-          before(:each) { send_message([:foobar, [123, '123', :a123]]) }
+        context "when receiving [1, :foobar, [123, '123', :a123]]" do
+          before(:each) { send_message([1, :foobar, [123, '123', :a123]]) }
           after(:each) { server.handle_request }
 
           it "should call the right message on implementation" do
@@ -63,8 +63,8 @@ describe Zack::Server do
       subject { server }
 
       describe "<- #handle_request" do
-        context "when receiving [:foobar, [123, '123', :a123]]" do
-          before(:each) { send_message([:foobar, [123, '123', :a123]]) }
+        context "when receiving [1, :foobar, [123, '123', :a123]]" do
+          before(:each) { send_message([1, :foobar, [123, '123', :a123]]) }
           after(:each) { server.handle_request }
 
           it "should call the right message on implementation" do
@@ -74,9 +74,9 @@ describe Zack::Server do
               once
           end 
         end
-        context "when receiving [:foobar, [], 'answer_queue']" do
+        context "when receiving [1, :foobar, [], 'answer_queue']" do
           before(:each) { implementation.should_receive(:foobar => 'blubber') }
-          before(:each) { send_message([:foobar, [], 'answer_queue']) }
+          before(:each) { send_message([1, :foobar, [], 'answer_queue']) }
           before(:each) { server.handle_request }
           
           it "should post the answer to the tube 'answer_queue'" do
@@ -84,7 +84,10 @@ describe Zack::Server do
             msg = beanstalk.reserve(1)
             msg.delete
             
-            YAML.load(msg.body).should == 'blubber'
+            rq_id, answer = YAML.load(msg.body)
+            
+            rq_id.should == 1
+            answer.should == 'blubber'
           end 
         end
       end

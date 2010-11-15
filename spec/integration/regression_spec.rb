@@ -1,10 +1,20 @@
 require 'spec_helper'
 
+require 'timeout'
+
 describe "Regression: " do
   def self.fork_server(server_class)
     # Fork a server in the background
     before(:each) { 
+      # Clear old messages
+      conn = Beanstalk::Connection.new(BEANSTALK_CONNECTION, 'regression')
+      while conn.peek_ready
+        conn.reserve.delete
+      end
+      
+      # Start a new server
       @pid = fork do
+        $stderr.reopen('/dev/null')
         Zack::Server.new(
           'regression', 
           :server => BEANSTALK_CONNECTION, 
@@ -17,27 +27,28 @@ describe "Regression: " do
       Process.waitpid(@pid)
     }
   end
-  let(:client) { Zack::Client.new(
-    'regression', 
-    :server => BEANSTALK_CONNECTION, 
-    :with_answer => [:reader]) 
-  }
+  def get_client(timeout, *with_answer)
+    Zack::Client.new(
+      'regression', 
+      :timeout => timeout,
+      :server => BEANSTALK_CONNECTION, 
+      :with_answer => with_answer)
+  end
     
   describe "asynchronous long running message, followed by a short running reader message (bug)" do
     class Regression1Server
       def reader; 42; end
       def long_running; sleep 0.1 end
     end
-    
     fork_server Regression1Server
+
+    let(:client) { get_client(10, :reader) }
 
     # Wait for the server to launch
     before(:each) { 
       sleep 0.01    # This is the same bug that we expose below...
-      timeout(1) do
-        # wait till the server works
-        client.reader.should == 42
-      end
+      # wait till the server works
+      client.reader.should == 42
     }
   
     it "should correctly call the reader" do
@@ -49,6 +60,61 @@ describe "Regression: " do
     end 
   end
   describe "server crash during a message that has an answer" do
+    class CrashingServer
+      def crash_and_burn
+        fail
+      end
+    end
     
+    fork_server CrashingServer
+    let(:client) { get_client(1, :crash_and_burn) }
+    
+    RSpec::Matchers.define :take_long do 
+      match(&lambda do |block|
+        begin 
+          Timeout::timeout(2) do
+            block.call
+          end
+        rescue Timeout::Error
+          return true
+        end
+        false
+      end)
+    end
+    
+    it "should timeout a blocking call" do
+      lambda {
+        lambda {
+          client.crash_and_burn
+        }.should_not take_long
+      }.should raise_error(Zack::ServiceTimeout)
+    end
+  end
+  describe "server that takes a long time, timeout in client stops the operation" do
+    class LongRunningServer
+      def long_running(time, answer)
+        sleep time
+        return answer
+      end
+    end
+    
+    fork_server LongRunningServer
+    let(:client) { get_client(1, :long_running) }
+    
+    it "should successfully complete a call that takes less than the timeout" do
+      client.long_running(0, 42).should == 42
+    end 
+    context "when the first call takes longer than the client timeout" do
+      before(:each) { 
+        begin
+          client.long_running(1.1, 10)
+        rescue Zack::ServiceTimeout
+        end
+      }
+      
+      it "should correctly handle subsequent messages" do
+        client.long_running(0, 42).should == 42
+      end
+    end
   end
 end

@@ -27,9 +27,9 @@ class Zack::Server
   #
   def handle_request
     job = @connection.reserve
-    sym, args, answer_tube = nil, nil, nil
+    rq_id, sym, args, answer_tube = nil, nil, nil, nil
     begin
-      sym, args, answer_tube = YAML.load(job.body)
+      rq_id, sym, args, answer_tube = YAML.load(job.body)
     ensure
       # If yaml decoding crashes, the message is probably invalid. Delete it. 
       # If an exception is raised later on, we treat the request as satisfied.
@@ -41,7 +41,7 @@ class Zack::Server
     
     if answer_tube
       on_tube(answer_tube) do
-        @connection.put retval.to_yaml
+        @connection.put [rq_id, retval].to_yaml
       end
     end
   end

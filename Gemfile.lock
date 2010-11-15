@@ -2,9 +2,21 @@ GEM
   remote: http://rubygems.org/
   specs:
     beanstalk-client (1.1.0)
+    diff-lcs (1.1.2)
+    flexmock (0.8.11)
+    rspec (2.1.0)
+      rspec-core (~> 2.1.0)
+      rspec-expectations (~> 2.1.0)
+      rspec-mocks (~> 2.1.0)
+    rspec-core (2.1.0)
+    rspec-expectations (2.1.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.1.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   beanstalk-client
+  flexmock (>= 0.8.11)
+  rspec (>= 2.1.0)

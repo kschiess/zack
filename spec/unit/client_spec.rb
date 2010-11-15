@@ -29,7 +29,7 @@ describe Zack::Client do
       before(:each) { client.foobar(123, '123', :a123) }
 
       it "should queue the message [:foobar, [123, '123', :a123]]" do
-        receive_message.should == [:foobar, [123, '123', :a123]]
+        receive_message.should == [1, :foobar, [123, '123', :a123]]
       end 
     end
   end
@@ -40,53 +40,49 @@ describe Zack::Client do
       :server => BEANSTALK_CONNECTION) }
     
     context "when calling foo" do
-      attr_reader :answer
-
+      attr_reader :answer_queue
+      let(:answers) { Queue.new }
+      
       # Sends the server a message (as YAML)
-      def send_answer(answer, answer_queue)
+      def fake_answer(answer, answer_queue)
         beanstalk.use answer_queue
-        beanstalk.put answer.to_yaml
+        beanstalk.put [1, answer].to_yaml
       end
 
-      def wait_for_answer
-        timeout(1) do
-          loop do
-            break if @done
-            sleep 0.05
-          end
-        end
-      end
-
+      # Send a request and wait for an answer; let the test run during the
+      # whole time.
+      #
       before(:each) do
-        @done = false
         Thread.start do 
-          @answer = client.foo
-          @done = true
+          answers << client.foo
         end
       end
+      
+      # Returns the next answer or waits forever
+      def answer
+        answers.pop
+      end
 
-      it "should queue the message [:foo, [], 'answer_queue']" do
-        sym, args, answer_queue = receive_message
+      it "should queue the message [1, :foo, [], 'answer_queue']" do
+        rq_id, sym, args, answer_queue = receive_message
         begin
+          rq_id.should == 1
           sym.should == :foo
           args.should == []
           answer_queue.should match(/answer_.*/)
         ensure
           # Make sure the client will receive an answer.
-          send_answer('', answer_queue)
+          fake_answer('', answer_queue)
         end
       end
 
       context "when the answer is posted" do
-        attr_reader :answer_queue
         before(:each) do
-          sym, args, @answer_queue = receive_message
-          send_answer('blah', answer_queue)
-          wait_for_answer
+          rq_id, sym, args, @answer_queue = receive_message
+          fake_answer('blah', answer_queue)
         end
         
-        subject { answer }
-        it { should == 'blah' }
+        it { answer.should == 'blah' }
 
         it "should delete the job on the answer queue" do
           stat = beanstalk.stats_tube(answer_queue)

@@ -2,10 +2,9 @@ require "rubygems"
 require "rake/gempackagetask"
 require "rake/rdoctask"
 
-require "spec"
-require "spec/rake/spectask"
-Spec::Rake::SpecTask.new
-
+require 'rspec'
+require 'rspec/core/rake_task'
+Rspec::Core::RakeTask.new
 task :default => :spec
 
 # This builds the actual gem. For details of what all these options
