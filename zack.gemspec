@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.date = %q{2010-11-16}
   s.email = ["kaspar.schiess@absurd.li", "mail@patrickmarchi.ch"]
   s.extra_rdoc_files = ["README"]
-  s.files = ["History.txt", "LICENSE", "Rakefile", "README", "spec", "lib/zack", "lib/zack/client.rb", "lib/zack/server.rb", "lib/zack.rb"]
+  s.files = ["History.txt", "LICENSE", "Rakefile", "README", "spec", "lib/zack", "lib/zack/answer.rb", "lib/zack/client.rb", "lib/zack/message.rb", "lib/zack/server.rb", "lib/zack.rb"]
   s.homepage = %q{http://github.com/kschiess/zack}
   s.rdoc_options = ["--main", "README"]
   s.require_paths = ["lib"]

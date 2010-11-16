@@ -11,6 +11,7 @@ class Zack::Client
 
     @with_answer = opts[:with_answer] || []
     @timeout     = opts[:timeout] || 10 # seconds
+    
     unless @with_answer.empty?
       # Ain't it beautiful
       digest = Digest::MD5.new
@@ -24,20 +25,18 @@ class Zack::Client
   def respond_to?(msg)
     true
   end
-  def method_missing(sym, *args, &result_callback)
-    request_id = generate_request_id
-    message = [request_id, sym, args]
+  def method_missing(sym, *args, &block)
+    raise ArgumentError, "Can't call methods remotely with a block" if block
     
-    if @with_answer.include? sym
-      message << @answer_queue_name
-    end
-    
-    @connection.put message.to_yaml
+    message = create_message(sym, args)
+    @connection.put message.serialize
 
-    if @with_answer.include? sym      
+    if message.has_answer?
       loop do
-        answer_id, answer = get_next_answer
-        return answer if answer_id == request_id
+        answer = read_next_answer
+        
+        # Discard answers that don't match our request
+        return answer.value if message.answered_by?(answer)
       end
     end
     
@@ -45,9 +44,16 @@ class Zack::Client
   end
   
 private
+  # Create a Zack::Message from a method call. 
+  #
+  def create_message(sym, args)
+    # We allow for @answer_queue_name to be nil sometimes!
+    Zack::Message.new(generate_request_id, sym, args, @answer_queue_name)
+  end
+
   # Retrieves the next answer from the answer queue and deletes it there. 
   #
-  def get_next_answer
+  def read_next_answer
     begin
       job = @answer_connection.reserve(@timeout)
     rescue Beanstalk::TimedOut
@@ -55,7 +61,7 @@ private
     end
 
     job.delete
-    return YAML.load(job.body)
+    return Zack::Answer.deserialize(job.body)
   end
 
   # Generates a request id. 
