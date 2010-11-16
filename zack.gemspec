@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{zack}
-  s.version = "0.1.2"
+  s.version = "0.1.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kaspar Schiess", "Patrick Marchi"]
-  s.date = %q{2010-11-15}
+  s.date = %q{2010-11-16}
   s.email = ["kaspar.schiess@absurd.li", "mail@patrickmarchi.ch"]
   s.extra_rdoc_files = ["README"]
   s.files = ["History.txt", "LICENSE", "Rakefile", "README", "spec", "lib/zack", "lib/zack/client.rb", "lib/zack/server.rb", "lib/zack.rb"]
