@@ -48,7 +48,10 @@ private
   #
   def create_message(sym, args)
     # We allow for @answer_queue_name to be nil sometimes!
-    Zack::Message.new(generate_request_id, sym, args, @answer_queue_name)
+    Zack::Message.new(
+      generate_request_id, 
+      sym, args, 
+      @with_answer.include?(sym.to_sym) ? @answer_queue_name : nil)
   end
 
   # Retrieves the next answer from the answer queue and deletes it there. 

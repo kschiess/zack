@@ -17,6 +17,15 @@ describe Zack::Message do
         message.serialize.should == "--- \n- 1\n- :message\n- - :arg1\n  - :arg2\n- answer_queue_123234343\n"
       end 
     end 
+    describe "<- #deserialize" do
+      subject { Zack::Message.deserialize(
+        message.serialize)
+      }
+      
+      its(:id) { should == 1}
+      its(:sym) { should == :message }
+      its(:args) { should == [:arg1, :arg2] }
+    end
     describe "<- #has_answer?" do
       subject { message.has_answer? }
       
@@ -35,6 +44,22 @@ describe Zack::Message do
         
         it { should == false}
       end
+    end
+    describe "<- #deliver_to(object)" do
+      it "should send the message to the object" do
+        object = flexmock()
+        object.should_receive(:message).with(:arg1, :arg2).once
+        
+        message.deliver_to object
+      end 
+      it "should wrap the return value into an Answer instance" do
+        object = flexmock(:message => :answer)
+        answer = message.deliver_to object
+        
+        answer.should be_a(Zack::Answer)
+        answer.id.should == message.id
+        answer.value.should == :answer
+      end 
     end
   end
   

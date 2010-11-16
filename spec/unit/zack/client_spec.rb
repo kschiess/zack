@@ -46,6 +46,11 @@ describe Zack::Client do
       :with_answer => [:foo], 
       :server => BEANSTALK_CONNECTION) }
     
+    context "when calling bar (async)" do
+      it "should return nil for message #bar" do
+        client.bar.should == nil
+      end 
+    end
     context "when calling foo" do
       attr_reader :answer_queue
       let(:answers) { Queue.new }

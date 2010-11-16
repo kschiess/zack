@@ -27,21 +27,18 @@ class Zack::Server
   #
   def handle_request
     job = @connection.reserve
-    rq_id, sym, args, answer_tube = nil, nil, nil, nil
-    begin
-      rq_id, sym, args, answer_tube = YAML.load(job.body)
-    ensure
-      # If yaml decoding crashes, the message is probably invalid. Delete it. 
-      # If an exception is raised later on, we treat the request as satisfied.
-      job.delete
-    end
+    # If yaml decoding crashes, the message is probably invalid. Delete it. 
+    # If an exception is raised later on, we treat the request as satisfied.
+    job.delete
+    
+    message = Zack::Message.deserialize(job.body)
     
     instance = @factory.produce
-    retval = instance.send(sym, *args)
+    answer = message.deliver_to(instance)
     
-    if answer_tube
-      on_tube(answer_tube) do
-        @connection.put [rq_id, retval].to_yaml
+    if message.has_answer?
+      on_tube(message.queue) do
+        @connection.put answer.serialize
       end
     end
   end
