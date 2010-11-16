@@ -92,5 +92,6 @@ describe Zack::Server do
         end
       end
     end    
+
   end
 end

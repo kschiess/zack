@@ -46,13 +46,29 @@ class Zack::Server
   # Runs the server and keeps running until the world ends (or the process, 
   # whichever comes first).
   #
-  def run
+  def run(&block)
     loop do
-      handle_request
+      exception_handling(block) do
+        handle_request
+      end
     end
   end
   
 private
+  # Defines how the server handles exception. 
+  #
+  def exception_handling(exception_handler)
+    if exception_handler
+      begin
+        yield
+      rescue => exception
+        exception_handler.call(exception)
+      end
+    else
+      yield
+    end
+  end
+
   def on_tube(temporary_tube_name)
     begin
       @connection.use temporary_tube_name

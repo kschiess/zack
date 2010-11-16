@@ -2,6 +2,10 @@
 
   + All calls now have a default timeout of 10 seconds. Timeouts reset the
     queue in a good state. Look at the :timeout option on the client.
+    
+  * The big refactoring, introducing Answer and Message. 
+  
+  + Server exception handling: Just run with a block that acts on the exception. 
 
 = 0.1.2 / 09-11-2010
 

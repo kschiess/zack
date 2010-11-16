@@ -6,7 +6,8 @@ class Autotest::Rspec2 < Autotest
       filename
     }
     add_mapping(%r%^lib/(.*)\.rb$%) { |_, m|
-      ["spec/unit/#{m[1]}_spec.rb"]
+      ["spec/unit/#{m[1]}_spec.rb"] + 
+        files_matching(%r%^spec/integration/.*_spec\.rb$%)
     }
   end
 end

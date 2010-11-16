@@ -10,4 +10,7 @@ class ChunkyBaconAnnouncer
   end
 end
 
-Zack::Server.new('sample', :simple => ChunkyBaconAnnouncer).run
+Zack::Server.new(
+  'sample', 
+  :simple => ChunkyBaconAnnouncer, 
+).run
