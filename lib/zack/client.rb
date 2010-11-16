@@ -31,7 +31,7 @@ class Zack::Client
     message = create_message(sym, args)
     @connection.put message.serialize
 
-    if message.has_answer?
+    if message.needs_answer?
       loop do
         answer = read_next_answer
         

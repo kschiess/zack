@@ -36,7 +36,7 @@ class Zack::Server
     instance = @factory.produce
     answer = message.deliver_to(instance)
     
-    if message.has_answer?
+    if message.needs_answer?
       on_tube(message.queue) do
         @connection.put answer.serialize
       end

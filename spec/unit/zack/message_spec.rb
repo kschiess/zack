@@ -26,8 +26,8 @@ describe Zack::Message do
       its(:sym) { should == :message }
       its(:args) { should == [:arg1, :arg2] }
     end
-    describe "<- #has_answer?" do
-      subject { message.has_answer? }
+    describe "<- #needs_answer?" do
+      subject { message.needs_answer? }
       
       it { should == true }
     end
