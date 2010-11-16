@@ -1,3 +1,8 @@
+= 0.1.3 / ???
+
+  + All calls now have a default timeout of 10 seconds. Timeouts reset the
+    queue in a good state. Look at the :timeout option on the client.
+
 = 0.1.2 / 09-11-2010
 
   * FIX: Don't read our own messages back (client)
