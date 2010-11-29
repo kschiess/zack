@@ -4,7 +4,7 @@
   %head
     %meta{ 'http-equiv' => "Content-type", :content => "text/html;charset=UTF-8" }
     %title
-      parslet -
+      zack -
       = h page.title
       
     %meta{ :name => 'author', :content => 'Kaspar Schiess (http://absurd.li)' }
@@ -16,7 +16,6 @@
   %body
     #everything
       .main_menu
-        %img{:src => 'imgs/parsley_logo.png', :alt => 'Parslet Logo'}
         %ul
           %li= link_to('about', 'index.html')
           %li= link_to('get started', 'get-started.html')
@@ -30,16 +29,7 @@
     
       .copyright
         :textile
-          MIT License, 2010, (c) <a href="http://absurd.li">Kaspar Schiess</a><br/>
-          Logo by "Florian Hanke":http://floere.github.com, "CC Attribution":http://creativecommons.org/licenses/by/1.0/ license
-      
+          website under Creative Commons, code MIT license
+          
       :javascript
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-16365074-2']);
-        _gaq.push(['_trackPageview']);
-
-        (function() {
-          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
+        // google tracker here
