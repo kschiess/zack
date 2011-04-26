@@ -1,4 +1,9 @@
-= 0.1.3 / ???
+= 0.2.0 / ???
+
+  + Starting with this version, zack depends on Cod for all its inner workings
+    and just adds RPC. This makes it lean to the point of nonexistence. 
+
+= 0.1.3 / not released
 
   + All calls now have a default timeout of 10 seconds. Timeouts reset the
     queue in a good state. Look at the :timeout option on the client.

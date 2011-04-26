@@ -16,8 +16,8 @@ spec = Gem::Specification.new do |s|
 
   # Change these as appropriate
   s.name              = "zack"
-  s.version           = "0.1.3"
-  s.summary           = "Ruby RPC calls via beanstalkd"
+  s.version           = "0.2.0"
+  s.summary           = "Ruby RPC calls via Cod"
   s.authors           = ['Kaspar Schiess', 'Patrick Marchi']
   s.email             = ["kaspar.schiess@absurd.li", 'mail@patrickmarchi.ch']
   s.homepage          = "http://github.com/kschiess/zack"
@@ -30,8 +30,7 @@ spec = Gem::Specification.new do |s|
   s.files             = %w(History.txt LICENSE Rakefile README) + Dir.glob("{spec,lib/**/*}")
   s.require_paths     = ["lib"]
 
-  # If you want to depend on other gems, add them here, along with any
-  # relevant versions
+  s.add_dependency("cod", "~> 0.1.0")
   s.add_dependency("beanstalk-client", "~> 1.0.2")
 
   # If your tests use any gems, include them here

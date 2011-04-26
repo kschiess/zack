@@ -9,13 +9,11 @@ describe Zack::Server do
     end
   end
   context "instance" do
-    let(:beanstalk) { Beanstalk::Connection.new(BEANSTALK_CONNECTION, 'zack_server_test') }
     let(:implementation) { flexmock(:implementation) }
 
-    # Sends the server a message (as YAML)
-    def send_message(message)
-      beanstalk.put message.to_yaml
-    end
+    # Replacing the Cod::Service with a mock
+    let(:service) { flexmock(:service) }
+    before(:each) { flexmock(server, :service => service) }
 
     context "with a factory" do
       # A small factory that always returns instance.
@@ -32,15 +30,15 @@ describe Zack::Server do
           :server => BEANSTALK_CONNECTION
         )
       }
-
-      subject { server }
-
+      
       describe "<- #handle_request" do
-        context "when receiving [1, :foobar, [123, '123', :a123]]" do
-          before(:each) { send_message([1, :foobar, [123, '123', :a123]]) }
+        context "when receiving [:foobar, [123, '123', :a123]]" do
           after(:each) { server.handle_request }
 
           it "should call the right message on implementation" do
+            service.should_receive(:one).
+              and_yield([:foobar, [123, '123', :a123]])
+            
             implementation.
               should_receive(:foobar).
               with(123, '123', :a123).
@@ -60,38 +58,21 @@ describe Zack::Server do
         )
       }
 
-      subject { server }
-
       describe "<- #handle_request" do
         context "when receiving [1, :foobar, [123, '123', :a123]]" do
-          before(:each) { send_message([1, :foobar, [123, '123', :a123]]) }
           after(:each) { server.handle_request }
 
           it "should call the right message on implementation" do
+            service.should_receive(:one).
+              and_yield([:foobar, [123, '123', :a123]])
+            
             implementation.
               should_receive(:foobar).
               with(123, '123', :a123).
               once
           end 
         end
-        context "when receiving [1, :foobar, [], 'answer_queue']" do
-          before(:each) { implementation.should_receive(:foobar => 'blubber') }
-          before(:each) { send_message([1, :foobar, [], 'answer_queue']) }
-          before(:each) { server.handle_request }
-          
-          it "should post the answer to the tube 'answer_queue'" do
-            beanstalk.watch 'answer_queue'
-            msg = beanstalk.reserve(1)
-            msg.delete
-            
-            rq_id, answer = YAML.load(msg.body)
-            
-            rq_id.should == 1
-            answer.should == 'blubber'
-          end 
-        end
       end
     end    
-
   end
 end

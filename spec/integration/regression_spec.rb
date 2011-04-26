@@ -23,7 +23,7 @@ describe "Regression: " do
       end
     }
     after(:each) { 
-      Process.kill('TERM', @pid) 
+      Process.kill('KILL', @pid) 
       Process.waitpid(@pid)
     }
   end

@@ -1,10 +1,7 @@
-require 'beanstalk-client'
-require 'yaml'
+
+require 'cod'
 
 module Zack
-  autoload :Message, 'zack/message'
-  autoload :Answer, 'zack/answer'
-  
   autoload :Server, 'zack/server'
   autoload :Client, 'zack/client'
   
