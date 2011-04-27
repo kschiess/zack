@@ -30,8 +30,8 @@ spec = Gem::Specification.new do |s|
   s.files             = %w(History.txt LICENSE Rakefile README) + Dir.glob("{spec,lib/**/*}")
   s.require_paths     = ["lib"]
 
-  s.add_dependency("cod", "~> 0.1.0")
-  s.add_dependency("beanstalk-client", "~> 1.0.2")
+  s.add_dependency("cod", "~> 0.2")
+  s.add_dependency("beanstalk-client", "~> 1.0")
 
   # If your tests use any gems, include them here
   s.add_development_dependency("rspec")
