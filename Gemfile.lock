@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/kschiess/cod.git
-  revision: 139ead320589922a188785c5085e5d3c297b778b
+  revision: a0b531eaff23cbef5889662d66e0128f7969531b
   specs:
     cod (0.1)
 

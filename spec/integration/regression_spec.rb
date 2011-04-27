@@ -34,6 +34,21 @@ describe "Regression: " do
       :server => BEANSTALK_CONNECTION, 
       :with_answer => with_answer)
   end
+
+  def print_stats
+    connection = Beanstalk::Connection.new(BEANSTALK_CONNECTION)
+
+    puts "Stats: "
+    pp connection.stats
+
+    puts "Tubes: "
+    connection.list_tubes.each do |tube|
+      p tube
+      pp connection.stats_tube(tube)
+    end
+    
+    connection.close
+  end
     
   describe "asynchronous long running message, followed by a short running reader message (bug)" do
     class Regression1Server
@@ -53,7 +68,7 @@ describe "Regression: " do
   
     it "should correctly call the reader" do
       # Because the code used to watch ALL tubes, not just the relevant ones, 
-      # we got our own answer back from the service tube when waiting for an
+      # we got our own request back from the service tube when waiting for an
       # answer on the answer tube. 
       client.long_running
       client.reader.should == 42
@@ -101,11 +116,11 @@ describe "Regression: " do
     fork_server LongRunningServer
     let(:client) { get_client(1, :long_running) }
     
-    it "should successfully complete a call that takes less than the timeout" do
+    it "should pass a sanity check" do
       client.long_running(0, 42).should == 42
     end 
     context "when the first call takes longer than the client timeout" do
-      before(:each) { 
+      before(:each) {
         begin
           client.long_running(1.1, 10)
         rescue Zack::ServiceTimeout

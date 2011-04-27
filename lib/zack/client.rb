@@ -17,7 +17,7 @@ class Zack::Client
       @incoming = Cod.beanstalk(server)
     end
     
-    @service = Cod::Client.new(@outgoing, @incoming)
+    @service = Cod::Client.new(@outgoing, @incoming, 1)
   end
   
   def respond_to?(msg)
