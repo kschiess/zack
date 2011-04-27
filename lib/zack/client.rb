@@ -34,6 +34,8 @@ class Zack::Client
       service.notify [sym, args]
       return nil
     end
+  rescue Cod::Channel::TimeoutError
+    raise Zack::ServiceTimeout, "No response from server in the allowed time."
   end
   
   def has_answer?(sym)

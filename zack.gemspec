@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kaspar Schiess", "Patrick Marchi"]
-  s.date = %q{2011-04-26}
+  s.date = %q{2011-04-27}
   s.email = ["kaspar.schiess@absurd.li", "mail@patrickmarchi.ch"]
   s.extra_rdoc_files = ["README"]
   s.files = ["History.txt", "LICENSE", "Rakefile", "README", "spec", "lib/zack", "lib/zack/client.rb", "lib/zack/server.rb", "lib/zack.rb"]
