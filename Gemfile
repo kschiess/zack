@@ -1,8 +1,7 @@
 source "http://rubygems.org"
 
 gem 'beanstalk-client'
-# DO NOT CHECK THIS IN!!! (YET)
-gem 'cod', :git => 'git://github.com/kschiess/cod.git'
+gem 'cod'
 
 group :development do
   gem 'rspec', '>= 2.1.0'
