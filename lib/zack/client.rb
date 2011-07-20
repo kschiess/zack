@@ -1,4 +1,5 @@
 
+require 'uuid'
 
 # Client part of Zack RPC
 #
@@ -14,7 +15,8 @@ class Zack::Client
 
     @outgoing = Cod.beanstalk(server, tube_name)
     unless @with_answer.empty?
-      @incoming = Cod.beanstalk(server)
+      @incoming = Cod.beanstalk(server, 
+        unique_tube_name(tube_name))
     end
     
     @service = Cod::Client.new(@outgoing, @incoming, 1)
@@ -40,5 +42,26 @@ class Zack::Client
   
   def has_answer?(sym)
     @with_answer.include?(sym.to_sym)
+  end
+
+private 
+  # Pretend that UUIDs don't collide for now.
+  #
+  def unique_tube_name(name)
+    "name.#{uuid}"
+  end
+  def uuid
+    uuid_generator.generate
+  end
+  def uuid_generator
+    generator=Thread.current[:zack_uuid_generator]
+    return generator if generator
+    
+    # assert: generator is nil
+    
+    # Pretend we've just forked, because that might be the case. 
+    UUID.generator.next_sequence
+    
+    Thread.current[:zack_uuid_generator]=generator=UUID.new
   end
 end

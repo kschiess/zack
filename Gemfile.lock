@@ -1,10 +1,30 @@
+GIT
+  remote: git@github.com:kschiess/cod.git
+  revision: 9a5e438b3232d2ef126ccd72a44e8966abbdbc58
+  specs:
+    cod (0.2.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
     beanstalk-client (1.1.0)
-    cod (0.2.0)
+    configuration (1.2.0)
     diff-lcs (1.1.2)
     flexmock (0.9.0)
+    growl (1.0.3)
+    guard (0.3.0)
+      open_gem (~> 1.4.2)
+      thor (~> 0.14.6)
+    guard-rspec (0.1.9)
+      guard (>= 0.2.2)
+    launchy (0.3.7)
+      configuration (>= 0.0.5)
+      rake (>= 0.8.1)
+    macaddr (1.0.0)
+    open_gem (1.4.2)
+      launchy (~> 0.3.5)
+    rake (0.9.2)
+    rb-fsevent (0.3.9)
     rspec (2.5.0)
       rspec-core (~> 2.5.0)
       rspec-expectations (~> 2.5.0)
@@ -13,12 +33,20 @@ GEM
     rspec-expectations (2.5.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.5.0)
+    thor (0.14.6)
+    uuid (2.3.2)
+      macaddr (~> 1.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   beanstalk-client
-  cod
+  cod!
   flexmock (>= 0.8.11)
+  growl
+  guard
+  guard-rspec
+  rb-fsevent
   rspec (>= 2.1.0)
+  uuid

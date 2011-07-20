@@ -6,14 +6,14 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kaspar Schiess", "Patrick Marchi"]
-  s.date = %q{2011-04-27}
+  s.date = %q{2011-07-20}
   s.email = ["kaspar.schiess@absurd.li", "mail@patrickmarchi.ch"]
   s.extra_rdoc_files = ["README"]
   s.files = ["History.txt", "LICENSE", "Rakefile", "README", "spec", "lib/zack", "lib/zack/client.rb", "lib/zack/server.rb", "lib/zack.rb"]
   s.homepage = %q{http://github.com/kschiess/zack}
   s.rdoc_options = ["--main", "README"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.2}
+  s.rubygems_version = %q{1.6.2}
   s.summary = %q{Ruby RPC calls via Cod}
 
   if s.respond_to? :specification_version then
