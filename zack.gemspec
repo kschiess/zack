@@ -15,25 +15,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{Ruby RPC calls via Cod}
-
-  if s.respond_to? :specification_version then
-    s.specification_version = 3
-
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<cod>, ["~> 0.2"])
-      s.add_runtime_dependency(%q<beanstalk-client>, ["~> 1.0"])
-      s.add_development_dependency(%q<rspec>, [">= 0"])
-      s.add_development_dependency(%q<flexmock>, [">= 0"])
-    else
-      s.add_dependency(%q<cod>, ["~> 0.2"])
-      s.add_dependency(%q<beanstalk-client>, ["~> 1.0"])
-      s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<flexmock>, [">= 0"])
-    end
-  else
-    s.add_dependency(%q<cod>, ["~> 0.2"])
-    s.add_dependency(%q<beanstalk-client>, ["~> 1.0"])
-    s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<flexmock>, [">= 0"])
-  end
+  
+  s.add_runtime_dependency('cod', "~> 0.3")
+  s.add_runtime_dependency('beanstalk-client', ["~> 1.0"])
 end

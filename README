@@ -48,6 +48,6 @@ Should run with most rubies of the 1.8 and 1.9 generations.
 
 STATUS
 
-Useful and useable. First release. 
+Useful for production use. Not yet tested in high-volume situations. 
 
 (c) Kaspar Schiess, Patrick Marchi

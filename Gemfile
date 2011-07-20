@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 gem 'beanstalk-client'
-gem 'cod', :git => "git@github.com:kschiess/cod.git"
+gem 'cod'
 gem 'uuid'
 
 group :development do
