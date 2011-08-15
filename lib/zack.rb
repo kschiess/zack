@@ -8,6 +8,7 @@ module Zack
   class ServiceTimeout < StandardError; end
 end
 
+require 'zack/unique_name'
 require 'zack/server'
 require 'zack/client'
 require 'zack/notifier'
