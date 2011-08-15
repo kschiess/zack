@@ -2,10 +2,6 @@
 # Server side for RPC calls. 
 #
 class Zack::Server
-  class SimpleFactory < Struct.new(:implementation_klass)
-    def produce; implementation_klass.new; end
-  end
-    
   attr_reader :service
   
   def initialize(tube_name, opts={})
@@ -14,7 +10,8 @@ class Zack::Server
     if opts.has_key? :factory
       @factory = opts[:factory]
     elsif opts.has_key? :simple
-      @factory = SimpleFactory.new(opts[:simple])
+      klass = opts[:simple]
+      @factory = lambda { klass.new }
     else
       raise ArgumentError, "Either :factory or :simple argument must be given." 
     end
@@ -27,7 +24,7 @@ class Zack::Server
   #
   def handle_request
     service.one { |(sym, args)|  
-      instance = @factory.produce
+      instance = @factory.call
       
       instance.send(sym, *args)
     }

@@ -18,7 +18,7 @@ describe Zack::Server do
     context "with a factory" do
       # A small factory that always returns instance.
       class ImplFactory < Struct.new(:instance)
-        def produce
+        def call
           instance
         end
       end
