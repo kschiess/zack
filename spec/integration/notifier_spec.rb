@@ -42,7 +42,7 @@ describe Zack::Notifier do
     Process.waitall
   }
 
-  it "returns all return values from all listeners" do
+  it "executes all registered listeners" do
     notifier.pids
     
     resulting_pids = @pids.size.times.map { backchannel.get(timeout: 0.5) }
