@@ -2,14 +2,15 @@ require 'spec_helper'
 
 describe Zack::Notifier do
   class Handler
-    def pids
-      Process.pid
+    def initialize(backchannel)
+      @backchannel = backchannel
     end
-    def shutdown
-      exit 0
+    def pids
+      backchannel << Process.pid
     end
   end
-  
+
+  let(:backchannel) { Cod.pipe }
   let(:notifier) {
     Zack::Notifier.new(
       'football', 
@@ -23,15 +24,13 @@ describe Zack::Notifier do
       fork do
         Zack::Listener.new(
           'football', 
-          simple: Handler,
+          factory: lambda { Handler.new(backchannel) },
           server: 'localhost:11300').run
       end
     }
   }
   # Makes sure the server processes are killed. 
   after(:each) { 
-    notifier.shutdown
-    
     @pids.each do |pid|
       Process.kill('TERM', pid)
     end
@@ -39,7 +38,11 @@ describe Zack::Notifier do
   }
 
   it "returns all return values from all listeners" do
-    notifier.pids =~ @pids
+    notifier.pids
+    
+    while backchannel.waiting?
+      @pids.should include(backchannel.get)
+    end
   end
 end
 

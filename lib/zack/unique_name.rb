@@ -1,3 +1,7 @@
+require 'uuid'
+
+# A UUID based unique name based on base_name. 
+#
 class Zack::UniqueName
   def initialize(base_name)
     @name = unique_tube_name(base_name)

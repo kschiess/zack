@@ -1,13 +1,18 @@
 
-require 'uuid'
-
 
 module Zack
   # Client for a simple client-server RPC connection. 
   #
   class Client
     attr_reader :service
-  
+
+    # Constructs a client for the service given by tube_name. Optional
+    # arguments are: 
+    #
+    # :server :: beanstalkd server location url
+    # :only :: ignores all messages not in this hash
+    # :with_answer :: these messages wait for an answer from the service
+    #
     def initialize(tube_name, opts={})
       server = opts[:server] || 'beanstalk:11300'
       # Only respond to these messages
@@ -27,23 +32,11 @@ module Zack
     def respond_to?(msg)
       !! @only[msg]
     end
-    def method_missing(sym, *args, &block)
-      super unless respond_to?(sym)
-    
-      raise ArgumentError, "Can't call methods remotely with a block" if block
 
-      if has_answer?(sym)
-        return service.call([sym, args])
-      else
-        service.notify [sym, args]
-        return nil
-      end
-    rescue Cod::Channel::TimeoutError
-      raise Zack::ServiceTimeout, "No response from server in the allowed time."
-    end
-  
     def has_answer?(sym)
       @with_answer.include?(sym.to_sym)
     end
+
+    include TransparentProxy
   end
 end
