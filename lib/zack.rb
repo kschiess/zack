@@ -11,6 +11,8 @@ end
 require 'zack/transparent_proxy'
 require 'zack/unique_name'
 
+require 'zack/target'
+
 require 'zack/server'
 require 'zack/client'
 
