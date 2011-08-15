@@ -6,7 +6,7 @@ describe Zack::Notifier do
       @backchannel = backchannel
     end
     def pids
-      backchannel << Process.pid
+      @backchannel.put Process.pid
     end
   end
 
@@ -21,13 +21,18 @@ describe Zack::Notifier do
   # Starts two server processes that are notified of events. 
   before(:each) { 
     @pids = 2.times.map { 
+      backchannel_dup = backchannel.dup
       fork do
-        Zack::Listener.new(
+        listener = Zack::Listener.new(
           'football', 
-          factory: lambda { Handler.new(backchannel) },
-          server: 'localhost:11300').run
+          factory: lambda { Handler.new(backchannel_dup) },
+          server: 'localhost:11300')
+        
+        backchannel_dup.put :ready
+        listener.run
       end
     }
+    @pids.size.times { backchannel.get }
   }
   # Makes sure the server processes are killed. 
   after(:each) { 
@@ -40,9 +45,9 @@ describe Zack::Notifier do
   it "returns all return values from all listeners" do
     notifier.pids
     
-    while backchannel.waiting?
-      @pids.should include(backchannel.get)
-    end
+    resulting_pids = @pids.size.times.map { backchannel.get(timeout: 0.5) }
+    
+    resulting_pids.should =~ @pids
   end
 end
 

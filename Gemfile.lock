@@ -1,8 +1,13 @@
+GIT
+  remote: git://github.com/kschiess/cod.git
+  revision: 5d4203af71c09f7052e4cd474565401c91d37848
+  specs:
+    cod (0.3.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
     beanstalk-client (1.1.0)
-    cod (0.3.0)
     configuration (1.2.0)
     diff-lcs (1.1.2)
     flexmock (0.9.0)
@@ -37,7 +42,7 @@ PLATFORMS
 
 DEPENDENCIES
   beanstalk-client
-  cod
+  cod!
   flexmock (>= 0.8.11)
   growl
   guard

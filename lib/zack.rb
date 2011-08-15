@@ -13,4 +13,6 @@ require 'zack/unique_name'
 
 require 'zack/server'
 require 'zack/client'
+
 require 'zack/notifier'
+require 'zack/listener'
