@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{zack}
-  s.version = "0.3.0"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kaspar Schiess", "Patrick Marchi"]
@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
   
   s.add_runtime_dependency('cod', "~> 0.3")
   s.add_runtime_dependency('beanstalk-client', ["~> 1.0"])
+  s.add_runtime_dependency('uuid', '~> 2.3')
 end
