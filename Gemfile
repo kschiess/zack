@@ -2,7 +2,7 @@ source "http://rubygems.org"
 
 gem 'beanstalk-client'
 gem 'cod', :git => 'git@github.com:kschiess/cod.git', 
-  :ref => '0d153a3859215a75eff363d10a2adb477eef6fcd'
+  :ref => 'a642dbd'
 gem 'uuid'
 gem 'rake'
 
