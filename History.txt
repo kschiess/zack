@@ -1,3 +1,10 @@
+= 0.3.3 / ???
+  + Updates to the cod rewrite, this eliminates the dependency on 
+    beanstalk-client.
+    
+  + Works and is designed only for beanstalk now. This allows usage of some
+    advanced queuing features. 
+
 = 0.3.2 / 31Aug2011
 
   . gemspec fix
