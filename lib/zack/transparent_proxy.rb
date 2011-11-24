@@ -1,4 +1,6 @@
 
+require 'timeout'
+
 # A method missing implementation that will use respond_to? to see wether a 
 # message should be answered. If yes, it delegates the message to service, 
 # which is supposed to return one of Cods RPC client primitives. Depending on
@@ -11,10 +13,14 @@ module Zack::TransparentProxy
     raise ArgumentError, "Can't call methods remotely with a block" if block
 
     if has_answer?(sym)
-      return service.call([sym, args])
+      timeout(1) do
+        return service.call([sym, args])
+      end
     else
       service.notify [sym, args]
       return nil
     end
+  rescue Timeout::Error
+    raise Zack::ServiceTimeout
   end
 end
