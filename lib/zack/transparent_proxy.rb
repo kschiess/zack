@@ -13,14 +13,16 @@ module Zack::TransparentProxy
     raise ArgumentError, "Can't call methods remotely with a block" if block
 
     if has_answer?(sym)
-      timeout(1) do
+      timeout(@timeout || 1) do
         return service.call([sym, args])
       end
     else
       service.notify [sym, args]
       return nil
     end
-  rescue Timeout::Error
-    raise Zack::ServiceTimeout
+  rescue Timeout::Error => ex
+    puts ex.backtrace
+    
+    raise Zack::ServiceTimeout, "The service took too long to answer (>#{@timeout || 1}s)."
   end
 end

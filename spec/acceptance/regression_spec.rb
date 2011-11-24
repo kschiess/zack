@@ -119,7 +119,7 @@ describe "Regression: " do
     it "should pass a sanity check" do
       client.long_running(0, 42).should == 42
     end 
-    context "when the first call takes longer than the client timeout" do
+    context "message ordering" do
       before(:each) {
         begin
           client.long_running(1.1, 10)
@@ -127,7 +127,7 @@ describe "Regression: " do
         end
       }
       
-      it "should correctly handle subsequent messages" do
+      it "should be preserved" do
         client.long_running(0, 42).should == 42
       end
     end

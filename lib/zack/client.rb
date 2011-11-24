@@ -19,6 +19,8 @@ module Zack
       @only        = opts[:only] || proc { true }
       # These have answers (wait for the server to answer)
       @with_answer = opts[:with_answer] || []
+      
+      @timeout     = opts[:timeout] || 1
 
       @outgoing = Cod.beanstalk(tube_name, server)
       unless @with_answer.empty?
