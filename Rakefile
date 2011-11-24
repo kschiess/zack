@@ -4,7 +4,7 @@ require 'rubygems/package_task'
 
 require 'rspec'
 require 'rspec/core/rake_task'
-Rspec::Core::RakeTask.new
+RSpec::Core::RakeTask.new
 task :default => :spec
 
 # This task actually builds the gem. 

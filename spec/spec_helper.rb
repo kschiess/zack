@@ -1,4 +1,6 @@
 
+require 'beanstalk-client'
+
 require 'zack'
 
 RSpec.configure do |config|

@@ -20,13 +20,14 @@ module Zack
       # These have answers (wait for the server to answer)
       @with_answer = opts[:with_answer] || []
 
-      @outgoing = Cod.beanstalk(server, tube_name)
+      @outgoing = Cod.beanstalk(tube_name, server)
       unless @with_answer.empty?
-        @incoming = Cod.beanstalk(server, 
-          UniqueName.new(tube_name))
+        @incoming = Cod.beanstalk(
+          UniqueName.new(tube_name), 
+          server)
       end
     
-      @service = Cod::Client.new(@outgoing, @incoming, 1)
+      @service = Cod::Service::Client.new(@outgoing, @incoming)
     end
   
     def respond_to?(msg)
