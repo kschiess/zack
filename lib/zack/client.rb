@@ -51,7 +51,10 @@ module Zack
     rescue Timeout::Error => ex
       raise Zack::ServiceTimeout, "The service took too long to answer (>#{@timeout || 1}s)."
     end
-
+    
+    def close
+      @service.close
+    end
   private 
     def with_timeout
       if @timeout

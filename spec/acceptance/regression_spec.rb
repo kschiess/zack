@@ -32,7 +32,8 @@ describe "Regression: " do
       'regression', 
       :timeout => timeout,
       :server => BEANSTALK_CONNECTION, 
-      :with_answer => with_answer)
+      :with_answer => with_answer).tap { |client| 
+        self.class.after(:each) { client.close } }
   end
 
   def print_stats
@@ -50,7 +51,7 @@ describe "Regression: " do
     connection.close
   end
     
-  describe "asynchronous long running message, followed by a short running reader message (bug)" do
+  describe "long running message, followed by a short running one (bug)" do
     class Regression1Server
       def reader; 42; end
       def long_running; sleep 0.1 end
@@ -98,11 +99,11 @@ describe "Regression: " do
     end
     
     it "should timeout a blocking call" do
-      lambda {
-        lambda {
+      expect {
+        expect {
           client.crash_and_burn
-        }.should_not take_long
-      }.should raise_error(Zack::ServiceTimeout)
+        }.not_to take_long
+      }.to raise_error(Zack::ServiceTimeout)
     end
   end
   describe "server that takes a long time, timeout in client stops the operation" do
