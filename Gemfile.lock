@@ -1,7 +1,7 @@
 GIT
   remote: git@github.com:kschiess/cod.git
-  revision: a642dbd555a9ad23f14cb672464ad5bc25d42930
-  ref: a642dbd
+  revision: 11976f6521a92057b28417f1b288e79907ba8794
+  ref: 11976f6521
   specs:
     cod (0.4.0)
 

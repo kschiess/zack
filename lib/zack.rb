@@ -8,7 +8,6 @@ module Zack
   class ServiceTimeout < StandardError; end
 end
 
-require 'zack/transparent_proxy'
 require 'zack/unique_name'
 
 require 'zack/target'
