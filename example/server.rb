@@ -12,5 +12,4 @@ end
 
 Zack::Server.new(
   'sample', 
-  :simple => ChunkyBaconAnnouncer, 
-).run
+  :simple => ChunkyBaconAnnouncer).run

@@ -17,7 +17,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{Ruby RPC calls via Cod}
   
-  s.add_runtime_dependency('cod', "~> 0.3")
-  s.add_runtime_dependency('beanstalk-client', ["~> 1.0"])
+  s.add_runtime_dependency('cod', "~> 0.4")
   s.add_runtime_dependency('uuid', '~> 2.3')
+
+  s.add_development_dependency('beanstalk-client', ["~> 1.0"])
 end

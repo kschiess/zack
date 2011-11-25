@@ -11,7 +11,7 @@ module Zack
     # Initializes #factory and #server.
     #
     def initialize(tube_name, opts={})
-      @server = opts[:server] || 'beanstalk:11300'
+      @server = opts[:server]
 
       if opts.has_key? :factory
         @factory = opts[:factory]

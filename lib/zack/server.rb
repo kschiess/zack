@@ -7,7 +7,7 @@ module Zack
   
     def initialize(tube_name, opts={})
       super
-        
+
       channel = Cod.beanstalk(tube_name, server)
       @service = Cod::Service.new(channel)
     end

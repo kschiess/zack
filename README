@@ -40,7 +40,7 @@ above.
 
 DEPENDENCIES
 
-Depends on beanstalkd (beanstalkd 1.4.4 or better).
+Depends on beanstalkd server (beanstalkd 1.4.4 or better).
 
 COMPATIBILITY
 

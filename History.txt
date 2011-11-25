@@ -5,6 +5,9 @@
   + Works and is designed only for beanstalk now. This allows usage of some
     advanced queuing features. 
 
+  + Breaking change: Default server is now 'localhost:11300', not a server on
+    the LAN we might not even own.
+
 = 0.3.2 / 31Aug2011
 
   . gemspec fix
