@@ -10,7 +10,5 @@ end
 
 require 'zack/unique_name'
 
-require 'zack/target'
-
 require 'zack/server'
 require 'zack/client'
