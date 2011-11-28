@@ -6,7 +6,7 @@ module Zack
     attr_reader :service
     attr_reader :factory
     attr_reader :server
-  
+    
     def initialize(tube_name, opts={})
       @server = opts[:server]
 
@@ -18,11 +18,11 @@ module Zack
       else
         raise ArgumentError, "Either :factory or :simple argument must be given." 
       end
-
+ 
       channel = Cod.beanstalk(tube_name, server)
-      @service = Cod::Service.new(channel)
-    end
-  
+      @service = channel.service
+    end 
+   
     # Handles exactly one request. 
     #
     def handle_request

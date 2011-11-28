@@ -37,7 +37,7 @@ module Zack
 
     def method_missing(sym, *args, &block)
       super unless respond_to?(sym)
-
+ 
       raise ArgumentError, "Can't call methods remotely with a block" if block
 
       if has_answer?(sym)
@@ -87,7 +87,7 @@ module Zack
           @server)
       end
     
-      @service = Cod::Service::Client.new(@outgoing, @incoming)
+      @service = @outgoing.client(@incoming)
     end
   end
 end
