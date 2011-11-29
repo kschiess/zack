@@ -10,17 +10,28 @@ describe "Exception handling" do
     conn.close
   }
   
-  class SimpleService
+  SimpleService = Struct.new(:control, :retry_log) do
+    # Used for the exception block specs
     def do_something
       fail
     end
+
+    # Used for the handler specs
+    def retry_message
+      retries = (retry_log[control.msg_id] += 1)
+      if retries < 2
+        control.retry
+      end
+    end
   end
+  
+  let!(:retry_log) { Hash.new(0) }
   
   let(:client) { Zack::Client.new('exceptions', 
     server: BEANSTALK_CONNECTION) }
   let(:server) { Zack::Server.new('exceptions', 
     server: BEANSTALK_CONNECTION, 
-    simple: SimpleService) }
+    factory: proc { |c| SimpleService.new(c, retry_log) }) }
   
   describe 'block given to #run' do
     it "can retry the message" do
@@ -53,6 +64,15 @@ describe "Exception handling" do
     end 
   end
   describe 'using the control parameter to the factory' do
-    
+    it "can retry the message from within the handler" do
+      client.retry_message
+      server.run(2)
+      
+      retry_log.should have(1).message
+      
+      msg_id, retries = retry_log.first
+      msg_id.should > 0
+      retries.should == 2
+    end 
   end
 end

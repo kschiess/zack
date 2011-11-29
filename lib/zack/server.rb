@@ -7,6 +7,24 @@ module Zack
     attr_reader :factory
     attr_reader :server
     
+    # Initializes a zack server. To specify which class should be the target
+    # of the RPC call, you must either give the :factory or the :simple
+    # argument. 
+    #
+    # :simple expects a class. This class will be constructed each time a
+    # request is made. Then the method will be called on the class. 
+    #
+    # :factory expects a callable (a block or something that has #call) and is
+    # passed the control object for the request (see Cod for an explanation of
+    # this). You can chose to ignore the control and just use the block to
+    # produce an object that is linked to the rest of your program. Or you can
+    # link to the rest of the program and the control at the same time. 
+    #
+    # Note that in any case, one object instance _per call_ is created. This
+    # is to discourage creating stateful servers. If you still want to do
+    # that, well you will just have to code around the limitation, now won't
+    # you. 
+    #
     def initialize(tube_name, opts={})
       @server = opts[:server]
 
