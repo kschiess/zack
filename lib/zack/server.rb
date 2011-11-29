@@ -14,7 +14,7 @@ module Zack
         @factory = opts[:factory]
       elsif opts.has_key? :simple
         klass = opts[:simple]
-        @factory = lambda { klass.new }
+        @factory = lambda { |ctl| klass.new }
       else
         raise ArgumentError, "Either :factory or :simple argument must be given." 
       end
@@ -25,17 +25,19 @@ module Zack
    
     # Handles exactly one request. 
     #
-    def handle_request
-      service.one { |(sym, args)|  
-        process_request(sym, args)
+    def handle_request(exception_handler=nil)
+      service.one { |(sym, args), control|
+        exception_handling(exception_handler, control) do
+          process_request(control, sym, args)
+        end
       }
     end
     
     # Processes exactly one request, but doesn't define how the request gets
     # here. 
     #
-    def process_request(sym, args)
-      instance = factory.call
+    def process_request(control, sym, args)
+      instance = factory.call(control)
 
       instance.send(sym, *args)
     end
@@ -43,28 +45,27 @@ module Zack
     # Runs the server and keeps running until the world ends (or the process, 
     # whichever comes first).
     #
-    def run(&block)
+    def run(&exception_handler)
       loop do
-        exception_handling(block) do
-          handle_request
-        end
+        handle_request(exception_handler)
       end
     end
 
   private
     # Defines how the server handles exception. 
     #
-    def exception_handling(exception_handler)
-      if exception_handler
-        begin
-          yield
-        rescue => exception
-          exception_handler.call(exception)
-        end
-      else
+    def exception_handling(exception_handler, control)
+      begin
         yield
+      rescue => exception
+        # If we have an exception handler, it gets handed all the exceptions. 
+        # No exceptions stop the operation. 
+        if exception_handler
+          exception_handler.call(exception, control)
+        else
+          raise
+        end
       end
     end
-  
   end
 end

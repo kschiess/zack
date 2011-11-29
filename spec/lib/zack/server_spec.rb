@@ -10,6 +10,7 @@ describe Zack::Server do
   end
   context "instance" do
     let(:implementation) { flexmock(:implementation) }
+    let(:control)        { flexmock(:control) }
 
     # Replacing the Cod::Service with a mock
     let(:service) { flexmock(:service) }
@@ -18,7 +19,7 @@ describe Zack::Server do
     context "with a factory" do
       # A small factory that always returns instance.
       class ImplFactory < Struct.new(:instance)
-        def call
+        def call(control)
           instance
         end
       end
@@ -37,7 +38,7 @@ describe Zack::Server do
 
           it "should call the right message on implementation" do
             service.should_receive(:one).
-              and_yield([:foobar, [123, '123', :a123]])
+              yields([:foobar, [123, '123', :a123]], control)
             
             implementation.
               should_receive(:foobar).
@@ -64,7 +65,7 @@ describe Zack::Server do
 
           it "should call the right message on implementation" do
             service.should_receive(:one).
-              and_yield([:foobar, [123, '123', :a123]])
+              yields([:foobar, [123, '123', :a123]], control)
             
             implementation.
               should_receive(:foobar).
