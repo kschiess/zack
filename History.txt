@@ -1,4 +1,4 @@
-= 0.3.3 / ???
+= 0.3.3 / 29Nov2011
   + Updates to the cod rewrite, this eliminates the dependency on 
     beanstalk-client.
     
