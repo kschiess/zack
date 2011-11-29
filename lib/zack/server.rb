@@ -28,6 +28,7 @@ module Zack
     def handle_request(exception_handler=nil)
       service.one { |(sym, args), control|
         exception_handling(exception_handler, control) do
+          # p [sym, args]
           process_request(control, sym, args)
         end
       }
@@ -42,12 +43,31 @@ module Zack
       instance.send(sym, *args)
     end
 
-    # Runs the server and keeps running until the world ends (or the process, 
-    # whichever comes first).
+    # Runs the server and keeps running until the world ends (or the process,
+    # whichever comes first). If you pass a non-nil messages argument, the
+    # server will process that many messages and then quit. (Maybe you will
+    # want to respawn the server from time to time?)
     #
-    def run(&exception_handler)
+    # Any exception that is raised inside the RPC code will be passed to the
+    # exception_handler block: 
+    # 
+    #   server.run do |exception, control|
+    #     # control is the service control object from cod. You can exercise
+    #     # fine grained message control using this. 
+    #     log.fatal exception
+    #   end
+    #
+    # If you don't reraise exceptions from the exception handler block, they
+    # will be caught and the server will stay running. 
+    #
+    def run(messages=nil, &exception_handler)
       loop do
         handle_request(exception_handler)
+
+        if messages
+          messages -= 1
+          break if messages <= 0
+        end
       end
     end
 
