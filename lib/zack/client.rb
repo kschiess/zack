@@ -1,4 +1,4 @@
-
+require 'timeout'
 
 module Zack
   # Client for a simple client-server RPC connection. 
