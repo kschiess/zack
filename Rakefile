@@ -15,7 +15,9 @@ task :gem => :spec
 spec = eval(File.read('zack.gemspec'))
 
 desc "Generate the gem package."
-Gem::PackageTask.new(spec)
+Gem::PackageTask.new(spec) do |pkg|
+  # pkg.need_tar = true
+end
 
 CLEAN << 'doc'
 CLEAN << 'pkg'
