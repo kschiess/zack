@@ -52,8 +52,17 @@ module Zack
         service.notify [sym, args]
         return nil
       end
+      
+    rescue Cod::ConnectionLost
+      # Don't resend, just reconnect. This might loose one or two messages, 
+      # but we don't make such guarantees at this protocol level.
+      reconnect
+      
+      raise Zack::AnswerLost
+      
     rescue Timeout::Error => ex
-      raise Zack::ServiceTimeout, "The service took too long to answer (>#{@timeout || 1}s)."
+      raise Zack::ServiceTimeout, 
+        "The service took too long to answer (>#{@timeout || 1}s)."
     end
     
     def close

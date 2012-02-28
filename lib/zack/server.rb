@@ -23,6 +23,7 @@ module Zack
     #   
     def initialize(tube_name, opts={})
       @server = opts[:server]
+      @tube_name = tube_name
 
       if opts.has_key? :factory
         @factory = opts[:factory]
@@ -32,9 +33,8 @@ module Zack
       else
         raise ArgumentError, "Either :factory or :simple argument must be given." 
       end
- 
-      @channel = Cod.beanstalk(tube_name, server)
-      @service = @channel.service
+
+      reconnect
     end 
    
     # Handles exactly one request. 
@@ -47,6 +47,13 @@ module Zack
           process_request(control, sym, args)
         end
       }
+      
+    # Reconnect when the connection is lost  
+    rescue Cod::ConnectionLost
+      @channel.close
+      reconnect
+      
+      retry 
     end
     
     # Processes exactly one request, but doesn't define how the request gets
@@ -103,6 +110,7 @@ module Zack
     def exception_handling(exception_handler, control)
       begin
         yield
+      
       rescue => exception
         # If we have an exception handler, it gets handed all the exceptions. 
         # No exceptions stop the operation. 
@@ -112,6 +120,11 @@ module Zack
           raise
         end
       end
+    end
+
+    def reconnect
+      @channel = Cod.beanstalk(@tube_name, @server)
+      @service = @channel.service
     end
   end
 end

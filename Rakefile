@@ -16,3 +16,6 @@ spec = eval(File.read('zack.gemspec'))
 
 desc "Generate the gem package."
 Gem::PackageTask.new(spec)
+
+CLEAN << 'doc'
+CLEAN << 'pkg'

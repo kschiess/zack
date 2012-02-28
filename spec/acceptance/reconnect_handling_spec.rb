@@ -66,6 +66,11 @@ describe "Connection interruption:" do
     it "reconnects automatically" do
       proxy.drop_all
       
+      expect {
+        client.signal
+      }.to raise_error(Zack::AnswerLost)
+      
+      # The client should have reconnected, so this should now work: 
       client.signal
       server.run(1)
 
@@ -86,15 +91,18 @@ describe "Connection interruption:" do
       server.run(1)
 
       flag_server.should be_signalled
+
       flag_server.clear
     }
     
     it "reconnects automatically" do
-      proxy.drop_all
-      
+      # Post one message to the queue
       client.signal
-      server.run(1)
+      proxy.drop_all
 
+      # Try to process a message (connection is interrupted)
+      server.run(1)
+      
       flag_server.should be_signalled
     end 
   end
