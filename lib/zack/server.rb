@@ -11,20 +11,14 @@ module Zack
     # of the RPC call, you must either give the :factory or the :simple
     # argument. 
     #
-    # :simple expects a class. This class will be constructed each time a
-    # request is made. Then the method will be called on the class. 
-    #
-    # :factory expects a callable (a block or something that has #call) and is
-    # passed the control object for the request (see Cod for an explanation of
-    # this). You can chose to ignore the control and just use the block to
-    # produce an object that is linked to the rest of your program. Or you can
-    # link to the rest of the program and the control at the same time. 
-    #
     # Note that in any case, one object instance _per call_ is created. This
-    # is to discourage creating stateful servers. If you still want to do
-    # that, well you will just have to code around the limitation, now won't
-    # you. 
+    # is to discourage creating stateful servers. 
     #
+    # @param tube_name [String] the tube to communicate with
+    # @option opts [Class] :simple class will be constructed for each request.
+    #   The request will then be handed to the class.
+    # @option opts [#call] :factory factory for request handler instances.
+    #   
     def initialize(tube_name, opts={})
       @server = opts[:server]
 
@@ -42,6 +36,7 @@ module Zack
     end 
    
     # Handles exactly one request. 
+    # @private
     #
     def handle_request(exception_handler=nil)
       service.one { |(sym, args), control|
@@ -54,6 +49,7 @@ module Zack
     
     # Processes exactly one request, but doesn't define how the request gets
     # here. 
+    # @private
     #
     def process_request(control, sym, args)
       instance = factory.call(control)
@@ -77,6 +73,10 @@ module Zack
     #
     # If you don't reraise exceptions from the exception handler block, they
     # will be caught and the server will stay running. 
+    #
+    # @param messages [Number] how many messages to process, or nil for endless
+    #   operation
+    # @yield [Exception, Cod::Beanstalk::Service::Control]
     #
     def run(messages=nil, &exception_handler)
       loop do
