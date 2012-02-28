@@ -1,3 +1,11 @@
+= 0.3.5 / ??? (next version)
+
+= 0.3.4 / 23Feb2012
+
+  + Reconnecting server 
+  
+  + Client notifies called of lost connection, reconnects automatically.
+
 = 0.3.3 / 29Nov2011
   + Updates to the cod rewrite, this eliminates the dependency on 
     beanstalk-client.
