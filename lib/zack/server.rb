@@ -17,7 +17,9 @@ module Zack
     # @param tube_name [String] the tube to communicate with
     # @option opts [Class] :simple class will be constructed for each request.
     #   The request will then be handed to the class.
-    # @option opts [#call] :factory factory for request handler instances.
+    # @option opts [#call] :factory factory for request handler instances. One
+    #   parameter gets passed to this call, the control structure for the 
+    #   beanstalk connection.
     #   
     def initialize(tube_name, opts={})
       @server = opts[:server]
@@ -31,8 +33,8 @@ module Zack
         raise ArgumentError, "Either :factory or :simple argument must be given." 
       end
  
-      channel = Cod.beanstalk(tube_name, server)
-      @service = channel.service
+      @channel = Cod.beanstalk(tube_name, server)
+      @service = @channel.service
     end 
    
     # Handles exactly one request. 
@@ -87,6 +89,12 @@ module Zack
           break if messages <= 0
         end
       end
+    end
+
+    # Closes the connection and shuts down the server. 
+    #
+    def close
+      @channel.close
     end
 
   private
