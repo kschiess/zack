@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     zack (0.3.4)
-      cod (~> 0.4)
+      cod (~> 0.4.3)
       uuid (~> 2.3)
 
 GEM

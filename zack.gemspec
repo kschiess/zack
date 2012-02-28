@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.summary = %q{Ruby RPC calls via Cod}
   
-  s.add_runtime_dependency('cod', "~> 0.4")
+  s.add_runtime_dependency('cod', "~> 0.4.3")
   s.add_runtime_dependency('uuid', '~> 2.3')
 
   s.add_development_dependency('beanstalk-client', ["~> 1.0"])
