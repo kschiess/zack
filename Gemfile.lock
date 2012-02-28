@@ -1,9 +1,15 @@
 GIT
-  remote: git@github.com:kschiess/cod.git
-  revision: 2c3465ed1c3a7fb357d48c542008c8dff2975a29
-  ref: 2c3465e
+  remote: git://github.com/kschiess/cod.git
+  revision: f2ab374facc3fd21dc9f4763204cf648e1c176e2
   specs:
-    cod (0.4.0)
+    cod (0.4.2)
+
+PATH
+  remote: .
+  specs:
+    zack (0.3.3)
+      cod (~> 0.4)
+      uuid (~> 2.3)
 
 GEM
   remote: http://rubygems.org/
@@ -16,7 +22,8 @@ GEM
       thor (~> 0.14.6)
     guard-rspec (0.1.9)
       guard (>= 0.2.2)
-    macaddr (1.0.0)
+    macaddr (1.5.0)
+      systemu (>= 2.4.0)
     rake (0.9.2.2)
     rb-fsevent (0.3.9)
     rspec (2.5.0)
@@ -27,15 +34,16 @@ GEM
     rspec-expectations (2.5.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.5.0)
+    systemu (2.4.2)
     thor (0.14.6)
-    uuid (2.3.2)
+    uuid (2.3.5)
       macaddr (~> 1.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  beanstalk-client
+  beanstalk-client (~> 1.0)
   cod!
   flexmock
   growl
@@ -44,4 +52,4 @@ DEPENDENCIES
   rake
   rb-fsevent
   rspec
-  uuid
+  zack!

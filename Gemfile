@@ -1,17 +1,7 @@
 source "http://rubygems.org"
 
-gem 'beanstalk-client'
-gem 'cod', :git => 'git@github.com:kschiess/cod.git', 
-  :ref => '2c3465e'
-gem 'uuid'
-gem 'rake'
+# To be able to develop a new version based on cod master, this needs to be
+# here. 
+gem 'cod', :git => 'git://github.com/kschiess/cod.git'
 
-group :development do
-  gem 'rspec'
-  gem 'flexmock'
-  
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'growl'
-  gem 'rb-fsevent'
-end
+gemspec
