@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe "When beanstalkd disappears" do
+require 'tcp_proxy'
+
+describe "Connection interruption:" do
   # Clear old messages (test isolation)
   before(:each) { 
     conn = Beanstalk::Connection.new(BEANSTALK_CONNECTION, 'reconnect')
@@ -15,9 +17,19 @@ describe "When beanstalkd disappears" do
       @signalled = true
     end
     
+    def clear
+      @signalled = false
+    end
+    
     def signalled?
       @signalled
     end
+  end
+  
+  def sub_port(connstr, new_port)
+    parts = BEANSTALK_CONNECTION.split(':')
+    parts[1] = new_port
+    parts.join(':')
   end
 
   let(:flag_server) { SimpleFlagServer.new }
@@ -25,7 +37,7 @@ describe "When beanstalkd disappears" do
   let(:server) { Zack::Server.new('reconnect', 
     server: BEANSTALK_CONNECTION, 
     factory: proc { |c| flag_server }) }
-    
+        
   after(:each) { client.close; server.close }
 
   it "smoke test to verify the setup" do
@@ -33,7 +45,57 @@ describe "When beanstalkd disappears" do
     server.run(1)
     
     flag_server.should be_signalled
-  end 
-  it "both client and server reconnect" do
-  end 
+  end
+  
+  describe 'when the connection between the client and the beanstalkd server disappears' do
+    let!(:proxy) { TCPProxy.new('localhost', 11301, 11300) }
+    after(:each) { proxy.close }
+    
+    let(:client) { Zack::Client.new('reconnect', 
+      server: sub_port(BEANSTALK_CONNECTION, 11301)) }
+    
+    # Try out the connection before interrupting it  
+    before(:each) { 
+      client.signal
+      server.run(1)
+
+      flag_server.should be_signalled
+      flag_server.clear
+    }
+    
+    it "reconnects automatically" do
+      proxy.drop_all
+      
+      client.signal
+      server.run(1)
+
+      flag_server.should be_signalled
+    end 
+  end
+  describe 'when the connection between the server and the beanstalkd server disappears' do
+    let!(:proxy) { TCPProxy.new('localhost', 11301, 11300) }
+    after(:each) { proxy.close }
+    
+    let(:server) { Zack::Server.new('reconnect', 
+      server: sub_port(BEANSTALK_CONNECTION, 11301), 
+      factory: proc { |c| flag_server }) }
+    
+    # Try out the connection before interrupting it  
+    before(:each) { 
+      client.signal
+      server.run(1)
+
+      flag_server.should be_signalled
+      flag_server.clear
+    }
+    
+    it "reconnects automatically" do
+      proxy.drop_all
+      
+      client.signal
+      server.run(1)
+
+      flag_server.should be_signalled
+    end 
+  end
 end
