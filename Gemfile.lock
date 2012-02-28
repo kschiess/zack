@@ -38,6 +38,7 @@ GEM
     thor (0.14.6)
     uuid (2.3.5)
       macaddr (~> 1.0)
+    yard (0.7.5)
 
 PLATFORMS
   ruby
@@ -52,4 +53,5 @@ DEPENDENCIES
   rake
   rb-fsevent
   rspec
+  yard
   zack!

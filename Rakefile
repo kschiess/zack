@@ -7,6 +7,9 @@ require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new
 task :default => :spec
 
+require 'yard'
+YARD::Rake::YardocTask.new
+
 # This task actually builds the gem. 
 task :gem => :spec
 spec = eval(File.read('zack.gemspec'))
