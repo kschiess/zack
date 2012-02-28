@@ -6,13 +6,14 @@ module Zack
   class Client
     attr_reader :service
 
-    # Constructs a client for the service given by tube_name. Optional
-    # arguments are: 
+    # Constructs a client for the service given by tube_name. 
     #
-    # :server :: beanstalkd server location url
-    # :only :: ignores all messages not in this hash
-    # :with_answer :: these messages wait for an answer from the service
-    # :timeout :: How long to wait for an answer
+    # @param tube_name [String] the tube to communicate with
+    # @option opts [String] :server beanstalkd server location url
+    # @option opts [Array<Symbol>] :only ignores all messages not in this hash
+    # @option opts [Array<Symbol>] :with_answer these messages wait for an 
+    #   answer from the service
+    # @option opts [Fixint] :timeout How long to wait for an answer
     #
     def initialize(tube_name, opts={})
       # Only respond to these messages
@@ -26,15 +27,18 @@ module Zack
 
       connect
     end
-  
+    
+    # @private
     def respond_to?(msg)
       !! @only[msg]
     end
-
+    
+    # @private
     def has_answer?(sym)
       @with_answer.include?(sym.to_sym)
     end
 
+    # @private
     def method_missing(sym, *args, &block)
       super unless respond_to?(sym)
  
